@@ -1,3 +1,43 @@
+Metadata-Version: 2.4
+Name: pythontrader
+Version: 1.5.0
+Summary: Autonomous multi-asset trading research, market-making, execution and risk engine
+License: MIT License
+        
+        Copyright (c) 2026 Noyon Ahmed
+        
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
+        
+        The above copyright notice and this permission notice shall be included in all
+        copies or substantial portions of the Software.
+        
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        SOFTWARE.
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: fastapi>=0.115
+Requires-Dist: uvicorn>=0.30
+Requires-Dist: pydantic>=2.8
+Requires-Dist: numpy>=2.0
+Provides-Extra: dev
+Requires-Dist: pytest>=8.3; extra == "dev"
+Requires-Dist: pytest-asyncio>=0.24; extra == "dev"
+Requires-Dist: pytest-cov>=5.0; extra == "dev"
+Requires-Dist: ruff>=0.6; extra == "dev"
+Requires-Dist: mypy>=1.11; extra == "dev"
+Dynamic: license-file
+
 # PythonTrader
 
 **PythonTrader** is a universal autonomous trading-research and market-making system. Its backend is built around a single idea: one intelligence layer should be able to reason over very different markets without pretending that equities, FX, perpetuals and thin memecoins have the same microstructure.
