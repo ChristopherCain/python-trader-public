@@ -1,0 +1,35 @@
+# Render Blueprint for the ForgoteLabeling public API (free tier).
+# Frontend is hosted separately on Cloudflare Pages; this deploys only the
+# FastAPI backend. Persistent data lives in Supabase Storage, NOT on Render's
+# ephemeral disk. See README "Public Deployment" for the full walkthrough.
+#
+# Secrets (sync: false) are entered in the Render dashboard, never committed.
+
+services:
+  - type: web
+    name: forgotelabeling-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: "pip install -r requirements-prod.txt"
+    startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    healthCheckPath: /health
+    envVars:
+      - key: STORAGE_BACKEND
+        value: cloud
+      # Must match the bucket you created in the Supabase dashboard. This is
+      # also the application default, so local cloud-mode runs and the deployed
+      # service read and write the same bucket.
+      - key: SUPABASE_BUCKET
+        value: projects
+      - key: PROJECT_TTL_HOURS
+        value: "30"
+      # --- secrets / per-deployment values: set in the Render dashboard ---
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: FRONTEND_ORIGIN
+        sync: false
+      - key: MAINTENANCE_TOKEN
+        sync: false

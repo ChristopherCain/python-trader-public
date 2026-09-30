@@ -1,0 +1,5 @@
+# Cloudflare Pages SPA fallback.
+# ForgoteLabeling uses client-side routing (react-router), so any deep link
+# (e.g. /project/<id>) must be served index.html and routed in the browser.
+# Without this, refreshing or opening such a URL directly returns a 404.
+/*    /index.html    200

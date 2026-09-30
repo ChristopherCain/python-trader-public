@@ -1,0 +1,2 @@
+# Market making
+The quoting model uses an Avellaneda–Stoikov-style reservation price. Inventory pushes reservation value away from mid; volatility and horizon widen the risk term; the liquidity-intensity term contributes to spread. A hard minimum spread prevents degenerate crossed quotes in unrealistically calm synthetic conditions. Inventory control is separate so additional quoting models can share the same position guardrails.

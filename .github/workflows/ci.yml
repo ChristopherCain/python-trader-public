@@ -1,0 +1,35 @@
+name: ci
+
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install
+        run: pip install -e '.[dev]'
+
+      - name: Critical lint
+        run: ruff check src/pythontrader tests scripts --select E9,F63,F7,F82
+
+      - name: Tests
+        run: pytest
+
+      - name: Repository invariants
+        run: PYTHONPATH=src python scripts/repo_invariants.py
+
+      - name: Reliability benchmark smoke
+        run: PYTHONPATH=src python scripts/benchmark_reliability_v5.py --iterations 1000 --json

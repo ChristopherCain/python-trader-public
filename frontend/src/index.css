@@ -1,0 +1,1126 @@
+/* =========================================================================
+   ForgoteLabeling — global theme
+
+   Design direction: quiet, Apple-like. Generous whitespace, a calm neutral
+   palette, one restrained accent, soft diffuse shadows, large corner radii
+   and refined system typography. Chrome recedes; the image and its boxes are
+   the only things competing for attention.
+
+   NOTE: the class names here are load-bearing for the annotation canvas.
+   `.bbox-image { pointer-events: none }` and `.bbox-canvas { position:
+   absolute; inset: 0 }` are what make bounding-box drawing work at all — do
+   not change them without re-testing drawing end to end.
+   ========================================================================= */
+
+:root {
+  /* Neutrals: warm-grey text on near-white surfaces. */
+  --text: #6e6e73;
+  --text-h: #1d1d1f;
+  --bg: #ffffff;
+  --panel: #fbfbfd;
+  --panel-2: #f5f5f7;
+  --border: #e3e3e6;
+  --border-strong: #d2d2d7;
+  --code-bg: #f5f5f7;
+
+  /* A single calm accent. */
+  --accent: #0071e3;
+  --accent-hover: #0077ed;
+  --accent-bg: rgba(0, 113, 227, 0.08);
+  --accent-border: rgba(0, 113, 227, 0.35);
+
+  --danger: #d70015;
+  --danger-hover: #e11d2b;
+  --danger-bg: rgba(215, 0, 21, 0.07);
+  --danger-border: rgba(215, 0, 21, 0.28);
+  --ok: #248a3d;
+
+  /* Amber, used only for the temporary-project notice and the countdown as it
+     approaches its deadline. Deliberately not part of the general palette. */
+  --warn: #b25000;
+  --warn-bg: rgba(191, 90, 0, 0.07);
+  --warn-border: rgba(191, 90, 0, 0.25);
+
+  /* Soft, layered, low-contrast elevation. */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.03);
+  --shadow:
+    0 1px 3px rgba(0, 0, 0, 0.05), 0 8px 24px -8px rgba(0, 0, 0, 0.1);
+  --shadow-lg:
+    0 2px 8px rgba(0, 0, 0, 0.06), 0 24px 56px -16px rgba(0, 0, 0, 0.22);
+
+  /* Shape. */
+  --r-sm: 8px;
+  --r: 12px;
+  --r-lg: 18px;
+  --r-pill: 980px;
+
+  --nav-h: 60px;
+
+  /* One shared content column. The navbar, the page and the footer all align
+     to this so the left edge is a single unbroken line down the page. */
+  --content-w: 1240px;
+  --page-x: clamp(20px, 4vw, 40px);
+
+  --sans:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --heading:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  font: 15px/1.55 var(--sans);
+  color-scheme: light dark;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #a1a1a6;
+    --text-h: #f5f5f7;
+    --bg: #000000;
+    --panel: #1d1d1f;
+    --panel-2: #2c2c2e;
+    --border: #2c2c2e;
+    --border-strong: #38383d;
+    --code-bg: #1c1c1e;
+
+    --accent: #0a84ff;
+    --accent-hover: #3b9bff;
+    --accent-bg: rgba(10, 132, 255, 0.16);
+    --accent-border: rgba(10, 132, 255, 0.45);
+
+    --danger: #ff453a;
+    --danger-hover: #ff6961;
+    --danger-bg: rgba(255, 69, 58, 0.14);
+    --danger-border: rgba(255, 69, 58, 0.4);
+    --ok: #30d158;
+
+    --warn: #ff9f0a;
+    --warn-bg: rgba(255, 159, 10, 0.14);
+    --warn-border: rgba(255, 159, 10, 0.38);
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.5), 0 8px 24px -8px rgba(0, 0, 0, 0.7);
+    --shadow-lg:
+      0 2px 8px rgba(0, 0, 0, 0.6), 0 24px 56px -16px rgba(0, 0, 0, 0.85);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+#root {
+  width: 100%;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--heading);
+  color: var(--text-h);
+  font-weight: 600;
+  margin: 0;
+}
+h1 {
+  font-size: 34px;
+  line-height: 1.15;
+  letter-spacing: -0.022em;
+}
+h2 {
+  font-size: 20px;
+  letter-spacing: -0.015em;
+}
+p {
+  margin: 0;
+}
+
+/* ---- Controls ---- */
+button {
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border-strong);
+  background: var(--bg);
+  color: var(--text-h);
+  border-radius: var(--r-pill);
+  padding: 8px 18px;
+  letter-spacing: -0.01em;
+  transition:
+    background 0.2s ease, border-color 0.2s ease, color 0.2s ease,
+    opacity 0.2s ease, transform 0.12s ease;
+}
+button:hover {
+  background: var(--panel-2);
+  border-color: var(--border-strong);
+}
+button:active {
+  transform: scale(0.98);
+}
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+button.primary:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+button.danger {
+  color: var(--danger);
+  border-color: transparent;
+  background: var(--danger-bg);
+}
+button.danger:hover {
+  color: #fff;
+  background: var(--danger);
+  border-color: var(--danger);
+}
+button.ghost {
+  border-color: transparent;
+  background: transparent;
+  color: var(--text);
+}
+button.ghost:hover {
+  background: var(--panel-2);
+  color: var(--text-h);
+}
+/* Quiet destructive action: neutral until intent is shown, red on hover.
+   Used where delete must stay clearly secondary to the primary action. */
+button.danger-ghost {
+  border-color: transparent;
+  background: transparent;
+  color: var(--text);
+}
+button.danger-ghost:hover {
+  background: var(--danger-bg);
+  border-color: transparent;
+  color: var(--danger);
+}
+button.small {
+  padding: 5px 13px;
+  font-size: 13px;
+}
+
+input[type="text"],
+input[type="color"],
+input:not([type]) {
+  font: inherit;
+  padding: 10px 13px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--bg);
+  color: var(--text-h);
+  width: 100%;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+input::placeholder {
+  color: var(--text);
+  opacity: 0.65;
+}
+input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3.5px var(--accent-bg);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+a:hover {
+  opacity: 0.75;
+}
+
+code {
+  font-family: var(--mono);
+  border-radius: 5px;
+  color: var(--text-h);
+  font-size: 13px;
+  padding: 2px 6px;
+  background: var(--code-bg);
+}
+
+/* ---- Navbar ---- */
+.app-navbar {
+  display: flex;
+  align-items: center;
+  height: var(--nav-h);
+  padding: 0 var(--page-x);
+  border-bottom: 1px solid var(--border);
+  /* Plain color first as the fallback; browsers without color-mix()/backdrop
+     filter keep a solid, legible bar. */
+  background: var(--bg);
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  flex-shrink: 0;
+}
+/* Inner rail. On the dashboard it is capped to the content column so the
+   brand lines up with the page heading; the workspace leaves it full-bleed
+   because its three panels run edge to edge. */
+.app-navbar .nav-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+}
+.app-navbar.contained .nav-inner {
+  max-width: var(--content-w);
+  margin: 0 auto;
+}
+.app-navbar .brand {
+  font-family: var(--heading);
+  font-weight: 600;
+  color: var(--text-h);
+  font-size: 17px;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+}
+.app-navbar .brand:hover {
+  opacity: 1;
+  color: var(--text-h);
+}
+.app-navbar .spacer {
+  flex: 1;
+}
+.app-navbar .crumb {
+  color: var(--text);
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 40vw;
+}
+
+/* ---- Generic layout ---- */
+/* `flex: 1` here + `margin-top: auto` on `.about` is the sticky-footer
+   pattern: on a short page the footer rests flush with the bottom of the
+   viewport instead of floating mid-page with a strip of empty background
+   beneath it. The gap the footer used to open up was caused by its filled
+   panel background and its height, both of which are now much reduced. */
+.page {
+  padding: 40px var(--page-x) 56px;
+  max-width: var(--content-w);
+  margin: 0 auto;
+  width: 100%;
+  flex: 1;
+}
+/* Page heading block: title on the left, quiet metadata underneath. */
+.page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  margin-bottom: 26px;
+}
+.page-head .titles {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.page-sub {
+  font-size: 14px;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.between {
+  justify-content: space-between;
+}
+.muted {
+  color: var(--text);
+  font-size: 13px;
+}
+.state {
+  padding: 64px 24px;
+  text-align: center;
+  color: var(--text);
+}
+.state.error {
+  color: var(--danger);
+}
+/* Empty state: a quiet bordered panel so a project-less dashboard still
+   reads as designed rather than unfinished. No illustration. */
+.empty {
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--panel);
+  padding: 56px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+.empty h2 {
+  font-size: 17px;
+}
+.empty p {
+  font-size: 14px;
+  color: var(--text);
+  max-width: 34ch;
+}
+.empty button {
+  margin-top: 12px;
+}
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: var(--r-pill);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  /* Neutral on purpose: blue is reserved for primary actions. */
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+/* ---- Project grid / cards ----
+   minmax(320px) rather than a narrower track: with only one or two projects a
+   narrow minimum leaves several empty columns and the row reads as clustered
+   against the left edge. min(100%, …) keeps single-column phones from
+   overflowing. */
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: 18px;
+}
+.card {
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 18px 18px 16px;
+  background: var(--panel);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.25s ease, transform 0.25s ease,
+    border-color 0.25s ease;
+}
+.card:hover {
+  box-shadow: var(--shadow);
+  border-color: var(--border-strong);
+  transform: translateY(-1px);
+}
+.card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.card h3 {
+  font-size: 16px;
+  letter-spacing: -0.015em;
+  word-break: break-word;
+  min-width: 0;
+}
+.card .stats {
+  display: flex;
+  gap: 14px;
+  font-size: 13px;
+  color: var(--text);
+  flex-wrap: wrap;
+}
+.card .created {
+  font-size: 12px;
+  color: var(--text);
+  /* Laid out as a row so the expiry badge can sit opposite the date. The date
+     itself carries the dimming, not the container, so the badge keeps its own
+     contrast. */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.card .created .created-date {
+  opacity: 0.8;
+}
+/* Actions pinned to the bottom so buttons line up across cards of differing
+   title length. */
+.card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 6px;
+}
+
+/* ---- Modal / dialog ---- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 50;
+  animation: fade-in 0.18s ease both;
+}
+.modal {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 28px;
+  width: 400px;
+  max-width: 100%;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  animation: pop-in 0.22s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+/* Confirmation variant: centered, quieter, no form fields. */
+.modal.confirm {
+  width: 360px;
+  text-align: center;
+  align-items: center;
+  gap: 14px;
+}
+.modal.confirm .modal-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 21px;
+  line-height: 1;
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+.modal.confirm h2 {
+  font-size: 18px;
+}
+.modal.confirm .modal-body {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.5;
+}
+.modal.confirm .modal-body strong {
+  color: var(--text-h);
+  font-weight: 600;
+  word-break: break-word;
+}
+.modal.confirm .modal-actions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  margin-top: 4px;
+}
+.modal.confirm .modal-actions button {
+  flex: 1;
+}
+/* Solid destructive confirm button (distinct from the subtle .danger chip). */
+button.danger-solid {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+}
+button.danger-solid:hover {
+  background: var(--danger-hover);
+  border-color: var(--danger-hover);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+}
+
+/* ---- Workspace ---- */
+.workspace {
+  display: grid;
+  grid-template-columns: 248px 1fr 288px;
+  height: calc(100svh - var(--nav-h));
+  min-height: 0;
+}
+.panel {
+  padding: 20px 18px;
+  overflow-y: auto;
+  min-height: 0;
+  background: var(--panel);
+}
+.panel.left {
+  border-right: 1px solid var(--border);
+}
+.panel.right {
+  border-left: 1px solid var(--border);
+}
+.panel h3 {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+.panel .section {
+  margin-bottom: 28px;
+}
+
+.thumb {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 7px;
+  border-radius: var(--r-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  margin-bottom: 6px;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+.thumb:hover {
+  background: var(--accent-bg);
+}
+.thumb.active {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+}
+.thumb img {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 7px;
+  background: var(--code-bg);
+  flex-shrink: 0;
+}
+.thumb .name {
+  flex: 1;
+  min-width: 0;
+  font-size: 12.5px;
+  color: var(--text-h);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.thumb .count {
+  font-size: 11px;
+  color: var(--text);
+}
+
+/* ---- Canvas ---- */
+.canvas-wrap {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+}
+.canvas-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+.canvas-stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  background: var(--panel-2);
+  padding: 28px;
+  min-height: 0;
+}
+.canvas-stage .placeholder {
+  color: var(--text);
+}
+/* Positioned wrapper: the <img> and the overlay <canvas> stack here at the
+   same size (set inline from the fitted dimensions). */
+.bbox-frame {
+  position: relative;
+  display: block;
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  max-width: 100%;
+  max-height: 100%;
+}
+/* Visual layer only. Non-interactive and non-draggable so the browser can
+   never start a native image-drag ghost or intercept the overlay's pointer
+   events. */
+.bbox-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+/* Interaction layer: transparent overlay pinned over the image. Owns all
+   pointer events, shows the crosshair on hover/drag, and blocks native
+   selection / touch scrolling while a box is being drawn. */
+.bbox-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  cursor: crosshair;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  touch-action: none;
+}
+
+/* ---- Labels ---- */
+.label-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 9px;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  border: 1px solid transparent;
+  margin-bottom: 4px;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+.label-item:hover {
+  background: var(--accent-bg);
+}
+.label-item.active {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+}
+.label-swatch {
+  width: 13px;
+  height: 13px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+.label-item .name {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-h);
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.label-item .del,
+.ann-item .del {
+  opacity: 0;
+  font-size: 12px;
+  color: var(--text);
+  background: none;
+  border: none;
+  border-radius: 50%;
+  padding: 2px 5px;
+  line-height: 1;
+  transition: opacity 0.18s ease, color 0.18s ease, background 0.18s ease;
+}
+.label-item:hover .del,
+.ann-item:hover .del {
+  opacity: 1;
+}
+.label-item .del:hover,
+.ann-item .del:hover {
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+.label-add {
+  display: flex;
+  gap: 7px;
+  margin-top: 10px;
+}
+.label-add input[type="color"] {
+  width: 40px;
+  padding: 3px;
+  flex-shrink: 0;
+}
+
+/* ---- Annotation list ---- */
+.ann-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 9px;
+  border-radius: var(--r-sm);
+  font-size: 13.5px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  margin-bottom: 3px;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+.ann-item:hover {
+  background: var(--accent-bg);
+}
+.ann-item.active {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+}
+.ann-item .name {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-h);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- Upload ---- */
+.uploader {
+  border: 1.5px dashed var(--border-strong);
+  border-radius: var(--r);
+  padding: 18px 14px;
+  text-align: center;
+  margin-bottom: 20px;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.uploader:hover {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+}
+.uploader.busy {
+  opacity: 0.65;
+}
+.progress {
+  height: 5px;
+  border-radius: var(--r-pill);
+  background: var(--code-bg);
+  overflow: hidden;
+  margin-top: 10px;
+}
+.progress span {
+  display: block;
+  height: 100%;
+  border-radius: var(--r-pill);
+  background: var(--accent);
+  transition: width 0.2s ease;
+}
+
+/* ---- Toast ---- */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 12px 18px;
+  border-radius: var(--r);
+  background: var(--text-h);
+  background: color-mix(in srgb, var(--text-h) 92%, transparent);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  color: var(--bg);
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  animation: pop-in 0.22s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+  /* Passive notification: never intercept pointer input, so it can't block
+     bounding-box drawing when it overlaps the canvas corner. */
+  pointer-events: none;
+}
+.toast.error {
+  background: var(--danger);
+  color: #fff;
+}
+
+.hint {
+  font-size: 12.5px;
+  color: var(--text);
+  line-height: 1.65;
+}
+.spin {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---- About / footer ----
+   Deliberately not a panel. An opaque --panel background made this read as a
+   large detached slab bolted onto the bottom of the page; a hairline rule on
+   the page background lets it read as the end of the same document.
+   `margin-top: auto` completes the sticky-footer pattern started on `.page`. */
+.about {
+  border-top: 1px solid var(--border);
+  padding: 30px var(--page-x) 26px;
+  margin-top: auto;
+}
+.about-inner {
+  max-width: var(--content-w);
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px 56px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.about-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+/* Intro takes the slack; the two link groups size to their content. */
+.about-col.intro {
+  flex: 1 1 300px;
+  max-width: 46ch;
+}
+.about-groups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px 48px;
+}
+.about h2 {
+  font-size: 15px;
+  letter-spacing: -0.01em;
+}
+.about p {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.6;
+}
+.about-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text);
+}
+.about-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+/* Link styled as a pill button; mirrors button metrics so the two read as
+   one control family. */
+.about-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  padding: 6px 14px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-h);
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.12s ease;
+}
+.about-btn:hover {
+  opacity: 1;
+  background: var(--panel-2);
+  border-color: var(--border-strong);
+}
+.about-btn:active {
+  transform: scale(0.98);
+}
+.about-btn svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+.about-bottom {
+  max-width: var(--content-w);
+  margin: 22px auto 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--text);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  justify-content: space-between;
+}
+
+/* ---- Temporary projects (public deployment only) ----
+   Both of these render only when the backend reports a project lifetime, so a
+   self-hosted instance never shows a single pixel of this. */
+
+/* Inline notice inside the create dialog. Framed rather than shouted: a warm
+   tinted panel with one icon, so the rule is impossible to miss but the dialog
+   still reads as a normal form. */
+.notice {
+  display: flex;
+  gap: 12px;
+  padding: 14px 15px;
+  border-radius: var(--r);
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-border);
+  text-align: left;
+}
+.notice-icon {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  line-height: 1;
+  background: var(--warn);
+  color: var(--bg);
+}
+.notice-text {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.notice-text strong {
+  font-family: var(--heading);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-h);
+  letter-spacing: -0.01em;
+}
+.notice-text p {
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--text);
+}
+
+/* Remaining-lifetime indicator. Quiet by default; the tone escalates only as
+   the deadline nears, so it informs continuously without nagging. */
+.expiry {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1;
+  padding: 4px 9px;
+  border-radius: var(--r-pill);
+  border: 1px solid transparent;
+  white-space: nowrap;
+  transition: color 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+}
+.expiry-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+.expiry-calm {
+  color: var(--text);
+  opacity: 0.85;
+}
+.expiry-soon {
+  color: var(--warn);
+  background: var(--warn-bg);
+  border-color: var(--warn-border);
+}
+.expiry-urgent,
+.expiry-expired {
+  color: var(--danger);
+  background: var(--danger-bg);
+  border-color: var(--danger-border);
+  font-weight: 500;
+}
+/* Only the final hour pulses — earlier states stay still. */
+.expiry-urgent .expiry-dot,
+.expiry-expired .expiry-dot {
+  animation: expiry-pulse 2s ease-in-out infinite;
+}
+@keyframes expiry-pulse {
+  50% {
+    opacity: 0.25;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .expiry-urgent .expiry-dot,
+  .expiry-expired .expiry-dot {
+    animation: none;
+  }
+}
+/* ---- Responsive ---- */@media (max-width: 860px) {
+  .about-inner {
+    flex-direction: column;
+    gap: 24px;
+  }
+  .about-col.intro {
+    max-width: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .page {
+    padding-top: 32px;
+    padding-bottom: 48px;
+  }
+  h1 {
+    font-size: 28px;
+  }
+  .page-head {
+    align-items: flex-start;
+  }
+  /* Full-width controls read better than a cramped inline row on phones. */
+  .card-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .card-actions button {
+    width: 100%;
+  }
+  .about-groups {
+    gap: 20px 32px;
+  }
+  .about-bottom {
+    flex-direction: column;
+  }
+}
+

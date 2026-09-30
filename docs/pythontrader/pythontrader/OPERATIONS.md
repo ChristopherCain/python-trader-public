@@ -1,0 +1,2 @@
+# Operations
+The default build is stateless except for optional SQLite event storage and checkpoint files. The API exposes health, state, deterministic stepping and order history. Production deployments should place the API behind an authenticating reverse proxy, persist audit events on durable storage, separate feed and execution processes, and export metrics to the site's observability stack. The shipped public configuration uses simulation mode.

@@ -1,0 +1,26 @@
+# Production runtime dependencies for the public deployment (Render free tier).
+#
+# Deliberately SLIM: the full requirements.txt at the repo root pulls in
+# ultralytics / opencv / numpy / torch for the (still unimplemented, 501-stub)
+# AI feature. None of that is imported at runtime, and it would not fit Render's
+# free 512 MB instance, so it is intentionally excluded here.
+#
+# Self-hosting? You can keep using the root requirements.txt. This file is only
+# what the hosted API process needs to serve requests.
+
+# Web framework + ASGI server
+fastapi
+uvicorn[standard]
+python-multipart
+
+# Settings / validation (reads env + optional .env)
+pydantic
+pydantic-settings
+python-dotenv
+
+# Cloud storage backend (Supabase Storage REST calls). Imported lazily, but
+# required whenever STORAGE_BACKEND=cloud.
+httpx
+
+# Image dimension probing on upload (best-effort; small wheel).
+pillow
