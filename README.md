@@ -86,7 +86,7 @@ Execution Journal / Reconciliation / Replay
 
 # 🖥️ Runtime Overview
 
-![PythonTrader Runtime Overview](docs/images/01-runtime-overview.png)
+![PythonTrader Runtime Overview](docs/images/01-runtime-overview.jpg)
 
 The runtime view is designed as an engineering-oriented terminal surface rather than a consumer trading dashboard.
 
@@ -131,7 +131,7 @@ A strategy can produce intent, but that intent can still be blocked by:
 
 # 🌐 Markets & Universe
 
-![PythonTrader Market Universe](docs/images/02-market-universe.png)
+![PythonTrader Market Universe](docs/images/02-market-universe.jpg)
 
 The universe layer provides a normalized cross-asset instrument registry.
 
@@ -266,7 +266,7 @@ Execution, risk, recovery and venue supervision remain separate responsibilities
 
 # ⚡ Execution
 
-![PythonTrader Execution Console](docs/images/03-execution-console.png)
+![PythonTrader Execution Console](docs/images/03-execution-console.jpg)
 
 The execution layer provides a common lifecycle around orders while isolating strategy code from venue-specific execution mechanics.
 
@@ -351,7 +351,7 @@ The recovery model is built around a simple assumption:
 
 # 🛡️ Risk Engine
 
-![PythonTrader Risk Console](docs/images/04-risk-console.png)
+![PythonTrader Risk Console](docs/images/04-risk-console.jpg)
 
 The risk engine sits between trading intent and execution.
 
@@ -410,7 +410,7 @@ This makes pre-trade policy and portfolio supervision explicit rather than impli
 
 # 🔁 Replay & Research
 
-![PythonTrader Replay Console](docs/images/05-replay-console.png)
+![PythonTrader Replay Console](docs/images/05-replay-console.jpg)
 
 Replay is a first-class component rather than an afterthought.
 
@@ -489,7 +489,7 @@ Actual production latency depends on:
 
 # 🧰 Operations
 
-![PythonTrader Operations Console](docs/images/06-operations-console.png)
+![PythonTrader Operations Console](docs/images/06-operations-console.jpg)
 
 Operational visibility is essential for an execution platform.
 
